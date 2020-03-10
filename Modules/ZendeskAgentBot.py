@@ -3,7 +3,7 @@ import json
 
 
 class ZendeskAgentBot:
-    """Class that represents a Zendesk Agent, can Create, Update, and Get all Zendesk Tickets"""
+    """Class that represents a Zendesk Agent that can Update, and Get all Zendesk Tickets"""
 
     baseAPI = ''
     newTickets = []
@@ -23,8 +23,7 @@ class ZendeskAgentBot:
 
         request = requests.get(self.baseAPI + 'search.json?query=type:ticket status:new', auth=(self.username, self.password))
         response = request.text
-        tickets = json.loads(response)['tickets'] if json.loads(
-            response)['count'] != 0 else None
+        tickets = json.loads(response)['results'] if json.loads(response)['count'] != 0 else None
         if tickets != None:
             for ticket in tickets:
                 if ticket is None:
@@ -40,8 +39,7 @@ class ZendeskAgentBot:
 
         request = requests.get(self.baseAPI + 'search.json?query=type:ticket status:open', auth=(self.username, self.password))
         response = request.text
-        tickets = json.loads(response)['results'] if json.loads(
-            response)['count'] != 0 else None
+        tickets = json.loads(response)['results'] if json.loads(response)['count'] != 0 else None
         if tickets != None:
             for ticket in tickets:
                 if ticket is None:
@@ -57,8 +55,7 @@ class ZendeskAgentBot:
 
         request = requests.get(self.baseAPI + 'search.json?query=type:ticket status:open', auth=(self.username, self.password))
         response = request.text
-        tickets = json.loads(response)['results'] if json.loads(
-            response)['count'] != 0 else None
+        tickets = json.loads(response)['results'] if json.loads(response)['count'] != 0 else None
         if tickets != None:
             for ticket in tickets:
                 if ticket is None:
@@ -67,9 +64,10 @@ class ZendeskAgentBot:
                     self.solvedTickets.append(ticket)
                 pass
         else:
-            print('No Open Tickets')
+            print('No Solved Tickets')
 
-    def replyToTicket(self, ticketId):
-        """Gets and comments on a ticket, specified by ticket id"""
+    def updateTicket(self, ticketId, ticket):
+        """Gets and updates specific ticket. Ticket is specified by ticket id"""
 
-        request = requests.put(self.baseAPI)
+        request = requests.put(self.baseAPI + "tickets/" + str(ticketId) + '.json', auth=(self.username, self.password), json=(ticket))
+        return request.status_code
