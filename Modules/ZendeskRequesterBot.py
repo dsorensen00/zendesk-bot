@@ -3,19 +3,25 @@ import requests
 
 
 class ZendeskRequesterBot:
+    """Class that represents a Zendesk Requester that can Create new Zendesk Tickets"""
+
     API = ''
     username = ''
     password = ''
-    phonyTicket = {}
 
-    def __init__(self, username, password, baseAPI, ticket):
+# Setting the initial values of username, password, and baseAPI
+    def __init__(self, username, password, baseAPI):
         self.username = username
         self.password = password
         self.API = baseAPI
-        self.phonyTicket = ticket
 
-    def createTicket(self):
-        if self.phonyTicket is None:
+    def createTicket(self, ticket):
+        """Creates a new ticket as a requestor, returns new ticket ID"""
+
+        if ticket is None:
             return
         else:
-            requests.post(self.API + 'tickets.json', auth=(self.username, self.password), json=(json.dumps(self.phonyTicket)))
+            request = requests.post(self.API + 'tickets.json', auth=(self.username, self.password), json=(ticket))
+            response = request.text
+            ticketId = json.loads(response)['id']
+            return ticketId
